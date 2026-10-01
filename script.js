@@ -1,0 +1,1 @@
+document.getElementById('test').onclick=()=>document.getElementById('out').textContent='JavaScript function is working.';
