@@ -1,29 +1,7 @@
 {
-  "name": "website-apk-studio",
-  "version": "1.4.0",
-  "description": "Website APK Studio - website project importer, code runner, live preview and Android APK builder",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "android:add": "npx cap add android",
-    "android:sync": "npx cap sync android",
-    "android:open": "npx cap open android",
-    "build:apk": "node scripts/build-apk.js",
-    "dev": "electron .",
-    "prepare:android": "node scripts/prepare-project.js",
-    "prepare:settings": "node scripts/prepare-settings.js",
-    "prepare:release": "node scripts/prepare-release.js",
-    "build:release": "node scripts/build-release.js",
-    "otp:server": "node otp-server/server.js"
-  },
-  "dependencies": {
-    "@capacitor/core": "^7.4.3",
-    "@capacitor/android": "^7.4.3"
-  },
-  "devDependencies": {
-    "electron": "^38.1.2",
-    "@capacitor/cli": "^7.4.3"
-  },
-  "build:release": "node scripts/build-release.js",
-    "otp:server": "node otp-server/server.js"
+  "name": "website-apk-studio-otp-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Server-side OTP service for Website APK Studio",
+  "scripts": { "start": "node server.js" }
 }
