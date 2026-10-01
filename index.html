@@ -1,3 +1,173 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="style.css"></head>
-<body><main><h1>My APK App</h1><p>Your website is ready to run inside the app.</p><button id="test">Test Function</button><p id="out"></p></main><script src="script.js"></script></body></html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Website APK Studio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-lock">🔐</div>
+      <h1>Website APK Studio</h1>
+      <p class="auth-subtitle">Sign in with a one-time verification code before entering the Studio.</p>
+      <div class="auth-email-label">Authorized email</div>
+      <div id="authEmail" class="auth-email"></div>
+      <button id="sendOtpBtn" class="primary auth-button">Send OTP</button>
+      <div id="otpRow" class="hidden">
+        <label class="auth-label">Enter 6-digit OTP</label>
+        <input id="authOtp" class="auth-otp" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000">
+        <button id="verifyOtpBtn" class="primary auth-button">Verify &amp; Enter Studio</button>
+      </div>
+      <div id="authMessage" class="auth-message">An OTP will be sent to the authorized email.</div>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">Website <span>APK Studio</span></div>
+    <div class="top-actions">
+      <button id="newBtn">New</button>
+      <button id="saveBtn">Save Project</button>
+      <button id="buildBtn" class="primary">Build Debug APK</button>
+      <button id="releaseBtn">Build Release APK</button>
+      <button id="openOutputBtn">APK Output</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <h3>Project</h3>
+      <label>App Name</label>
+      <input id="appName" value="My Website App">
+      <label>Package Name</label>
+      <input id="packageName" value="com.example.mywebsiteapp">
+      <label>Version</label>
+      <input id="version" value="1.0.0">
+
+      <h3>Import</h3>
+      <button id="uploadBtn">Upload Website Files</button>
+      <button id="zipBtn">Upload ZIP Project</button>
+      <button id="urlBtn">Use Website URL</button>
+      <div id="fileList" class="file-list">No files imported</div>
+      <div class="project-state" id="projectState">Project folder: not imported</div>
+
+      <h3>App Identity</h3>
+      <label>App Logo</label>
+      <div class="logo-picker">
+        <img id="logoPreview" class="logo-preview" alt="App logo preview">
+        <div class="logo-actions">
+          <button id="uploadLogoBtn" class="small">Upload Logo</button>
+          <button id="removeLogoBtn" class="small">Remove</button>
+        </div>
+      </div>
+      <div id="logoStatus" class="hint">No custom logo selected.</div>
+
+      <h3>App Opening Protection <span class="optional">Optional</span></h3>
+      <label class="check"><input type="checkbox" id="appProtection"> Require protection when opening this APK</label>
+      <div id="protectionOptions" class="protection-options hidden">
+        <label>Protection type</label>
+        <select id="protectionType">
+          <option value="password">Password</option>
+          <option value="otp">Email OTP</option>
+        </select>
+        <div id="passwordProtectionFields">
+          <label>App opening password</label>
+          <input id="appProtectionPassword" type="password" autocomplete="new-password" placeholder="Set an opening password">
+          <div class="hint">This password is separate for this APK.</div>
+        </div>
+        <div id="otpProtectionFields" class="hidden">
+          <div class="hint">OTP will be sent to <b>alihasan8069@gmail.com</b>. A secure OTP backend is required.</div>
+          <label>OTP service URL</label>
+          <input id="otpApiUrl" type="url" placeholder="https://your-server.example/otp">
+        </div>
+      </div>
+
+      <h3>App Settings</h3>
+      <label>Orientation</label>
+      <select id="orientation"><option value="portrait">Portrait</option><option value="landscape">Landscape</option><option value="auto">Auto</option></select>
+      <label class="check"><input type="checkbox" checked id="backNav"> Android back navigation</label>
+      <label class="check"><input type="checkbox" checked id="downloads"> Downloads</label>
+      <label class="check"><input type="checkbox" checked id="uploads"> File uploads</label>
+      <label class="check"><input type="checkbox" id="fullscreen"> Full screen</label>
+
+      <h3>Release Signing</h3>
+      <label>Keystore (.jks)</label>
+      <div class="row"><input id="keystorePath" placeholder="Select or create keystore" readonly><button id="chooseKeystoreBtn" class="small">Choose</button></div>
+      <button id="createKeystoreBtn" class="small">Create New Keystore</button>
+      <label>Key Alias</label>
+      <input id="keystoreAlias" placeholder="my-key">
+      <label>Keystore Password</label><input id="keystorePassword" type="password" placeholder="Enter only for this build">
+      <label>Key Password</label><input id="keyPassword" type="password" placeholder="Enter only for this build">
+
+      <h3>Native Features</h3>
+      <label class="check"><input type="checkbox" id="camera"> Camera</label>
+      <label class="check"><input type="checkbox" id="microphone"> Microphone</label>
+      <label class="check"><input type="checkbox" id="notifications"> Notifications</label>
+      <label class="check"><input type="checkbox" id="location"> Location</label>
+
+      <h3>Build Options</h3>
+    </aside>
+
+    <section class="workspace">
+      <div class="tabs">
+        <button class="tab active" data-tab="html">HTML</button>
+        <button class="tab" data-tab="css">CSS</button>
+        <button class="tab" data-tab="js">JavaScript</button>
+        <button class="tab" data-tab="json">JSON</button>
+      </div>
+
+      <div class="editor-wrap">
+        <textarea id="editor" spellcheck="false"></textarea>
+      </div>
+
+      <div class="toolbar">
+        <button id="runBtn" class="run">▶ Run</button>
+        <button id="stopBtn">■ Stop</button>
+        <button id="clearBtn">Clear</button>
+        <span id="status">Ready</span>
+      </div>
+
+      <div class="preview-tabs">
+        <button class="preview-tab active" data-preview="website">Website Preview</button>
+        <button class="preview-tab" data-preview="mobile">Mobile Preview</button>
+        <button class="preview-tab" data-preview="logs">Build / Run Logs</button>
+      </div>
+
+      <div class="preview-area">
+        <div id="websitePreview" class="preview-pane">
+          <iframe id="previewFrame" sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads"></iframe>
+        </div>
+        <div id="mobilePreview" class="preview-pane hidden">
+          <div class="phone">
+            <div class="phone-notch"></div>
+            <iframe id="mobileFrame" sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads"></iframe>
+          </div>
+        </div>
+        <pre id="logs" class="preview-pane hidden"></pre>
+      </div>
+    </section>
+  </main>
+
+  <div id="buildModal" class="modal hidden">
+    <div class="modal-card">
+      <h2>Build APK</h2>
+      <div class="step"><span>1</span> Project checking <b id="s1">Waiting</b></div>
+      <div class="step"><span>2</span> HTML/CSS/JS validation <b id="s2">Waiting</b></div>
+      <div class="step"><span>3</span> Android project sync <b id="s3">Waiting</b></div>
+      <div class="step"><span>4</span> APK compilation <b id="s4">Waiting</b></div>
+      <div class="progress"><div id="progressBar"></div></div>
+      <pre id="buildLog"></pre>
+      <div class="modal-actions">
+        <button id="downloadApkBtn" class="primary">Download APK</button>
+        <button id="openApkFolderBtn">Open APK Folder</button>
+        <button id="buildAgainBtn">Build Again</button>
+        <button id="closeModal">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
